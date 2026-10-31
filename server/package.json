@@ -1,9 +1,17 @@
 {
-  "name": "{{ project-name }}",
-  "version": "1.0.0",
-  "description": "A template for kick-starting a Cloudflare Workers project using Durable Objects",
-  "module": "./src/index.mjs",
+  "name": "@mindshare/server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@mindshare/shared": "*"
+  },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
     "wrangler": "^4.156.0"
   }
 }
