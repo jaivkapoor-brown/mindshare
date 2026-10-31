@@ -125,11 +125,11 @@ export function Market({ conn, audience, soundOn }: { conn: RoomConn; audience: 
       {canTrade && (
         <div className="footer" aria-live="off">
           <div>
-            <div className="k">Cash</div>
+            <div className="k">Credits left</div>
             <div className="v">{cash.toFixed(1)}</div>
           </div>
           <div style={{ textAlign: "right" }}>
-            <div className="k">Worth now (est.)</div>
+            <div className="k">Worth now (estimate)</div>
             <div className="v" style={{ color: net >= 100 ? "var(--amber)" : "var(--teal)" }}>{net.toFixed(1)}</div>
           </div>
         </div>

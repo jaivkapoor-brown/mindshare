@@ -162,7 +162,7 @@ export function Scoreboard({ conn, isHost, total }: { conn: RoomConn; isHost: bo
       <Countdown endsAt={s.phaseEndsAt} offset={conn.offset} total={total} />
       <h2 className="prompt">{last ? "Final round done" : `After round ${s.round} of ${s.totalRounds}`}</h2>
       <StandingsList standings={s.standings} meId={conn.seatId} deltas />
-      <p className="small dim">Scores are credits earned each round, summed. Everyone starts every round with a fresh 100.</p>
+      <p className="small dim">Scores are play-money credits earned each round, added up. Everyone starts every round with a fresh 100.</p>
       {isHost ? (
         <button className="btn primary big block" onClick={() => conn.send({ type: "host.skip" })}>
           {last ? "Final results" : "Next round"}

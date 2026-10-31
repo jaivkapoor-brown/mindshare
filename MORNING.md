@@ -14,8 +14,8 @@
 | M1 rooms + sync | done | codes, seat tokens, reconnect, host migration, DO alarms |
 | M2 core round | done | LMSR market, keyword judge, reveal + replay chart, scoreboard |
 | M3 LLM, bots, tutorial | done | real OpenAI calls with fallbacks, solo bots, tutorial round, commit-reveal check |
-| M4 social | in progress | audience wallet + crowd pick, board/TV view, Insider, sounds, share card are built and tested; polish pending |
-| M5 polish | pending | |
+| M4 social | done | audience wallet + crowd pick, TV board with QR, Insider mode + vote, sounds, share card |
+| M5 polish | done | copy pass, error states, keyboard e2e, cover image, description; Handshake form submission is left for you |
 | Backlog 1–10 | pending | |
 
 ## Deployed vs local
@@ -27,4 +27,5 @@ Everything committed is deployed. Real LLM calls are on in production.
 3. **Moderation only blocks strong categories** so edgy jokes survive. Alternative: block anything flagged.
 
 ## Known bugs / next task
-- Next: M4 polish pass, then M5.
+- Next: backlog (playthrough polish, latency, judge/decoy quality checks).
+- Submission files: `submission/cover.png`, `submission/description.md`.

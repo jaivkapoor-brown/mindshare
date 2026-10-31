@@ -47,7 +47,7 @@ test("three phones: create, join, play one round in sync", async ({ browser }) =
   for (const p of [a, b, c]) await waitPhase(p, "VERDICT", 70_000);
   for (const p of [a, b, c]) await waitPhase(p, "REVEAL", 10_000);
   await expect(a.getByText("✓ verified")).toBeVisible();
-  await expect(a.getByText("fallback judge")).toBeVisible();
+  if (!process.env.E2E_BASE_URL) await expect(a.getByText("fallback judge")).toBeVisible(); // LLM is off locally
   await noHorizontalScroll(a);
   for (const x of ctxs) await x.close();
 });

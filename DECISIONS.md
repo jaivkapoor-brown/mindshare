@@ -40,3 +40,5 @@ Format: `- YYYY-MM-DD HH:MM  M<n>  <decision>  (alternative: <what was not picke
 - 2026-10-31 02:05  M4  Audience join paths: late joiners and players past 10 become audience automatically; anyone can also "Just watch" from the home screen (/r/CODE?watch=1). The TV board itself is read-only with no wallet. (alternative: board URL grants a wallet)
 - 2026-10-31 02:05  M4  Insider vote: bots vote randomly so solo games aren't blocked; the host can close the vote. A seat is "caught" only with a strict majority; a caught Insider loses only positive winnings from their Insider rounds. (alternative: plurality)
 - 2026-10-31 02:05  M4  Sounds are synthesized with WebAudio (no files) and off by default everywhere until toggled; preference is remembered. (alternative: on by default on laptops)
+- 2026-10-31 02:30  M5  Copy pass removed gambling words ("bet", "cash", "get paid"); the market footer says "Credits left". (alternative: keep "cash")
+- 2026-10-31 02:30  M5  Keyboard trading: Enter/Space buys or sells 1, Shift+Enter trades 5 (the keyboard equivalent of long-press). (alternative: separate ×5 buttons)

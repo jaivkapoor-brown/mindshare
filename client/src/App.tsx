@@ -85,7 +85,7 @@ function Home() {
           </h1>
         </div>
       </div>
-      <p className="tagline">Write an answer. Bet on which one the AI judge will pick. You only get one clue about who the judge is.</p>
+      <p className="tagline">Write an answer. Predict which one the AI judge will pick. You only get one clue about who the judge is.</p>
 
       <div className="stack">
         <div>
