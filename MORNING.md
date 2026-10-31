@@ -27,10 +27,10 @@
 | BL9 performance | done | 94 KB gzipped JS; first paint 0.4–0.6 s, FCP ≤ 1 s on throttled 4G (`node e2e/perf.mjs`) |
 | BL10 README | done | |
 
-Tests: `npm test` = 80 unit/integration (LLM mocked); `npm run e2e` = 7 Playwright (3 phones in sync, solo full game + board + share card, keyboard-only, unsupported browsers). Opt-in real-API eval: `REAL_LLM=1 npx vitest run server/test/real-llm.test.ts`.
+Tests: `npm test` = 81 unit/integration (LLM mocked); `npm run e2e` = 7 Playwright (3 phones in sync, solo full game + board + share card, keyboard-only, unsupported browsers). Opt-in real-API eval: `REAL_LLM=1 npx vitest run server/test/real-llm.test.ts`.
 
 ## Deployed vs local
-Everything committed is deployed (last deploy after the "Backlog 1" commit). Real LLM calls are on in production. Nothing is local-only.
+Everything committed is deployed (last deploy: the "Solo pacing" commit). Real LLM calls are on in production; a tailed prod round showed the verdict coming from gpt-5.5 in 3.9 s (fast hedge 0.8 s). **Commits are on local `main` and not pushed**, so GitHub CI (lint, unit, build, and now e2e) has never run there. A clean clone in a scratch dir passed `npm ci`, lint, 81 tests and all 7 e2e with no `.dev.vars`, which is the same setup CI uses. Push when ready: `git push origin main`.
 
 ## Least-sure decisions (with the alternative)
 1. **Liquidity b = 25/40** (kept from spec). Measured: a 20-credit buy moves a price ~44 points with 5 answers; the spec's own 10–15 target needs b≈100. Relatedly, one tap buys 1 share for ~0.2 credits, so casual tapping moves round scores only a few points and royalties (+30) dominate. Tune b and `TRADE_SIZE_*` together in `shared/config.ts`.
@@ -41,7 +41,7 @@ Also worth a look: moderation only blocks strong categories so edgy jokes surviv
 
 ## Known bugs / rough edges
 - In a solo game with Insider mode on, the "who was the Insider" vote is mostly bots voting at random (works, but not meaningful alone).
-- The 60 s market can't be skipped (spec), so a solo round is ~1.5–2 minutes minimum.
+- The 60 s market can't be skipped (spec), so a solo round is ~1.5–2 minutes minimum. (Bots now finish writing within 1.5 s of your submit, so WRITE has no dead air.)
 - Cloudflare returned a transient "internal authentication error" on one deploy; a retry fixed it.
 
 ## Single most valuable next task
