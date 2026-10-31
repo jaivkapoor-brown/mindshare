@@ -143,8 +143,8 @@ function RoomInner({ code, nick, watch, solo }: { code: string; nick: string; wa
           {soundOn ? "🔊" : "🔈"}
         </button>
       </header>
-      <PhaseView conn={conn} isHost={isHost} audience={audience} soundOn={soundOn} commitSeen={commitSeen.current[state.round] ?? null} />
       <Tutorial state={state} />
+      <PhaseView conn={conn} isHost={isHost} audience={audience} soundOn={soundOn} commitSeen={commitSeen.current[state.round] ?? null} />
     </main>
   );
 }

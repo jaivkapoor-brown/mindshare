@@ -146,6 +146,7 @@ label.lbl { font-size: 14px; color: var(--dim); display: block; margin-bottom: 6
 /* ---------- judge ---------- */
 .judge { display: flex; gap: 12px; align-items: flex-start; }
 .judge svg { flex: none; }
+.judge.compact .bubble { font-size: 15px; padding: 8px 12px; }
 .bubble {
   position: relative; background: var(--text); color: #16130d; border-radius: 14px; padding: 10px 14px;
   font-size: 16px; line-height: 1.35;
@@ -224,7 +225,7 @@ label.lbl { font-size: 14px; color: var(--dim); display: block; margin-bottom: 6
 .winner { border: 2px solid var(--amber); background: linear-gradient(160deg, #2a210d, #17140c); border-radius: 18px; padding: 16px; }
 .winner .lbl2 { font-size: 13px; color: var(--amber); text-transform: uppercase; letter-spacing: 0.12em; }
 .winner .t { font-size: 22px; font-weight: 700; margin: 6px 0; }
-.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 3px 8px; border-radius: 99px; background: var(--bg3); color: var(--dim); }
+.badge { white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 3px 8px; border-radius: 99px; background: var(--bg3); color: var(--dim); }
 .badge.ok { background: #183218; color: var(--green); }
 .badge.warn { background: #3a2a10; color: var(--amber); }
 .badge.bad { background: #3a1814; color: var(--red); }
@@ -262,9 +263,8 @@ h2.sec { font-size: 14px; color: var(--dim); text-transform: uppercase; letter-s
 .toast { pointer-events: auto; background: var(--bg3); border: 1px solid var(--line); padding: 10px 14px; border-radius: 12px; font-size: 15px; max-width: 520px; box-shadow: 0 6px 24px rgba(0,0,0,0.4); animation: pop 0.2s ease-out; }
 .toast.error { border-color: #6a2a22; background: #2a1512; }
 .tutorial {
-  position: fixed; left: 12px; right: 12px; bottom: calc(86px + env(safe-area-inset-bottom)); z-index: 40;
-  max-width: 520px; margin: 0 auto; background: var(--amber); color: #1a1407; border-radius: 14px; padding: 12px 14px;
-  display: flex; gap: 10px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: pop 0.3s ease-out;
+  background: var(--amber); color: #1a1407; border-radius: 14px; padding: 10px 12px;
+  display: flex; gap: 10px; align-items: center; animation: pop 0.3s ease-out;
 }
 .tutorial .step { font-family: var(--mono); font-weight: 800; font-size: 13px; background: #1a1407; color: var(--amber); border-radius: 6px; padding: 2px 6px; flex: none; }
 .tutorial button { background: #1a1407; color: var(--amber); border: 0; border-radius: 8px; min-height: 40px; min-width: 44px; padding: 0 10px; font-weight: 700; cursor: pointer; flex: none; }

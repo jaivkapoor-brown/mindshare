@@ -10,7 +10,11 @@ Design pillars, in order: legible in one screen; the reveal is the payoff; the A
 
 ## 2. What the AI got wrong (agent appends, human edits)
 
-- 
+- The room-code collision test looped forever: a rigged random source produced "AAAA", which the generator rejects, so it spun. Fixed the test's random source.
+- Scores came out as "-0" when a tiny loss was halved in the practice round; fixed with `|| 0`.
+- The first slow-verdict test waited on a promise that never resolves; the test harness, not the game, was stuck. Restructured the test.
+- The first deploy after M2 shipped a stale client bundle because the client wasn't rebuilt after a UI fix; caught by eyeballing, redeployed. `npm run deploy` always rebuilds.
+- Keyword matching first missed "fetching" for the keyword "fetch"; added -ing/-ed suffixes.
 
 ## 3. Human decisions that changed the game (human, after playtests)
 

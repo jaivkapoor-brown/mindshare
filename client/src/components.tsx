@@ -50,10 +50,10 @@ export function JudgeBlob({ mood = "neutral", size = 72, wobble = false }: { moo
   );
 }
 
-export function JudgeSays({ mood, text, name, tell }: { mood?: Mood; text: string; name?: string | null; tell?: boolean }) {
+export function JudgeSays({ mood, text, name, tell, compact }: { mood?: Mood; text: string; name?: string | null; tell?: boolean; compact?: boolean }) {
   return (
-    <div className="judge">
-      <JudgeBlob mood={mood} size={56} />
+    <div className={"judge" + (compact ? " compact" : "")}>
+      <JudgeBlob mood={mood} size={compact ? 40 : 56} />
       <div className="grow">
         {name && <div className="small dim" style={{ marginBottom: 4 }}>{name}</div>}
         <div className={"bubble" + (tell ? " tell" : "")} role={tell ? "status" : undefined}>{text}</div>

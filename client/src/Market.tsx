@@ -64,7 +64,7 @@ export function Market({ conn, audience, soundOn }: { conn: RoomConn; audience: 
     <>
       <Countdown endsAt={s.phaseEndsAt} offset={conn.offset} total={MARKET_MS} />
       {s.tell ? (
-        <JudgeSays mood={s.tell.mood as Mood} text={s.tell.text} name={s.judgeName} tell />
+        <JudgeSays mood={s.tell.mood as Mood} text={s.tell.text} name={s.judgeName} tell compact />
       ) : (
         <p className="small dim" style={{ margin: 0 }}>
           {s.judgeName} will drop a hint at 0:30. <span className="faint">{s.prompt}</span>
