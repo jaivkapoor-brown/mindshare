@@ -330,11 +330,11 @@ function Lobby({ conn, isHost }: { conn: RoomConn; isHost: boolean }) {
 
 const KIND_LABEL = { identity: "who the judge is", loves: "what the judge loves", hates: "what the judge hates", quirk: "the judge's quirk" } as const;
 
-export function ClueChip({ conn }: { conn: RoomConn }) {
+export function ClueChip({ conn, compact }: { conn: RoomConn; compact?: boolean }) {
   const clue = conn.priv?.clue;
   if (!clue) return null;
   return (
-    <div className="cluechip">
+    <div className={"cluechip" + (compact ? " compact" : "")}>
       Your clue: <b>{clue.text.replace(/^The judge /, "the judge ")}</b>
     </div>
   );
@@ -457,9 +457,9 @@ function Write({ conn, audience, isHost }: { conn: RoomConn; audience: boolean; 
 // ---------- tutorial ----------
 
 const TUTORIAL: Record<string, [number, string]> = {
-  WRITE: [1, "Write the answer you think this judge would pick; your clue is a hint."],
-  MARKET: [2, "Tap + to buy answers you think will win; each winning share pays 1 credit, and prices show the room's best guess."],
-  REVEAL: [3, "The judge was locked in before anyone traded, and the green check proves it."],
+  WRITE: [1, "Write what this judge would pick; your clue is the hint."],
+  MARKET: [2, "Tap + on answers you think will win; each winning share pays 1 credit."],
+  REVEAL: [3, "The judge was locked in before trading; the green check proves it."],
 };
 
 function Tutorial({ state }: { state: PublicState }) {

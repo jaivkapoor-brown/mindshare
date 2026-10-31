@@ -63,14 +63,13 @@ export function Market({ conn, audience, soundOn }: { conn: RoomConn; audience: 
   return (
     <>
       <Countdown endsAt={s.phaseEndsAt} offset={conn.offset} total={MARKET_MS} />
+      <p className="mkt-prompt">{s.prompt}</p>
       {s.tell ? (
-        <JudgeSays mood={s.tell.mood as Mood} text={s.tell.text} name={s.judgeName} tell compact />
+        <JudgeSays mood={s.tell.mood as Mood} text={s.tell.text} tell compact />
       ) : (
-        <p className="small dim" style={{ margin: 0 }}>
-          {s.judgeName} will drop a hint at 0:30. <span className="faint">{s.prompt}</span>
-        </p>
+        <p className="small dim" style={{ margin: 0 }}>{s.judgeName} drops a hint at 0:30.</p>
       )}
-      {!audience && <ClueChip conn={conn} />}
+      {!audience && <ClueChip conn={conn} compact />}
       {audience && (
         <div className="banner">You're in the crowd market with your own credits. Vote for a crowd pick: its author gets +10.</div>
       )}
