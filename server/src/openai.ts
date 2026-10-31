@@ -14,6 +14,13 @@ import {
   REASONING_FAST,
   VERDICT_BEST_BUDGET_MS,
   VERDICT_TEMPERATURE,
+  DECOY_TEMPERATURE,
+  TELL_TEMPERATURE,
+  BOT_ANSWER_TEMPERATURE,
+  DECOY_LENGTH_FACTOR,
+  DECOY_DEFAULT_LEN,
+  MODERATION_STRONG_SCORE,
+  MODERATION_HARASSMENT_SCORE,
 } from "@mindshare/shared";
 import type { Persona, Trait } from "@mindshare/shared";
 import verdictTpl from "../../prompts/verdict.md";
@@ -76,7 +83,7 @@ export function verdictSchema(letters: string[]) {
 
 export function buildDecoyPrompt(input: DecoyInput) {
   const lens = input.examples.map((e) => e.length).sort((a, b) => a - b);
-  const target = Math.round((lens.length ? lens[Math.floor(lens.length / 2)] : 28) * 0.85);
+  const target = Math.round((lens.length ? lens[Math.floor(lens.length / 2)] : DECOY_DEFAULT_LEN) * DECOY_LENGTH_FACTOR);
   const roles = input.bait
     .map((b, i) =>
       b === "winner"
@@ -194,7 +201,7 @@ export class OpenAiLlm implements Llm {
     const schema = { type: "object", additionalProperties: false, required: ["answers"], properties: { answers: { type: "array", items: { type: "string" } } } };
     const system = buildDecoyPrompt(input);
     const r = await this.withRetry(LLM_TIMEOUT_DECOYS_MS, (ms) =>
-      this.call<{ answers: string[] }>({ label: "decoys", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: 0.9, system, user: `Write ${input.count} answer(s).`, schema, timeoutMs: ms, maxTokens: 200 }),
+      this.call<{ answers: string[] }>({ label: "decoys", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: DECOY_TEMPERATURE, system, user: `Write ${input.count} answer(s).`, schema, timeoutMs: ms, maxTokens: 200 }),
     );
     return r?.answers?.filter((a) => typeof a === "string" && a.trim()).slice(0, input.count) ?? null;
   }
@@ -203,7 +210,7 @@ export class OpenAiLlm implements Llm {
     const schema = { type: "object", additionalProperties: false, required: ["tell"], properties: { tell: { type: "string" } } };
     const system = buildTellPrompt(input);
     const r = await this.withRetry(LLM_TIMEOUT_TELL_MS, (ms) =>
-      this.call<{ tell: string }>({ label: "tell", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: 0.8, system, user: "Say your line.", schema, timeoutMs: ms, maxTokens: 120 }),
+      this.call<{ tell: string }>({ label: "tell", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: TELL_TEMPERATURE, system, user: "Say your line.", schema, timeoutMs: ms, maxTokens: 120 }),
     );
     const t = r?.tell?.trim();
     if (!t) return null;
@@ -234,7 +241,7 @@ export class OpenAiLlm implements Llm {
       : "";
     const system = fill(botsTpl, { prompt: input.prompt, count: input.count, examples_line, clues_block });
     const r = await this.withRetry(LLM_TIMEOUT_BOTS_MS, (ms) =>
-      this.call<{ answers: string[] }>({ label: "bot_answers", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: 1, system, user: `Write ${input.count} answers.`, schema, timeoutMs: ms, maxTokens: 300 }),
+      this.call<{ answers: string[] }>({ label: "bot_answers", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: BOT_ANSWER_TEMPERATURE, system, user: `Write ${input.count} answers.`, schema, timeoutMs: ms, maxTokens: 300 }),
     );
     return r?.answers?.map((a) => (typeof a === "string" ? a.trim() : "")).slice(0, input.count) ?? null;
   }
@@ -256,8 +263,8 @@ export class OpenAiLlm implements Llm {
       if (!r) return null;
       // Party-game answers are edgy by design; only block clear harassment, hate, sexual or self-harm content.
       const s = r.category_scores ?? {};
-      const strong = ["hate", "hate/threatening", "harassment/threatening", "sexual", "sexual/minors", "self-harm", "self-harm/intent", "self-harm/instructions", "violence/graphic"].some((k) => (s[k] ?? 0) > 0.5);
-      return r.flagged && (strong || (s["harassment"] ?? 0) > 0.8);
+      const strong = ["hate", "hate/threatening", "harassment/threatening", "sexual", "sexual/minors", "self-harm", "self-harm/intent", "self-harm/instructions", "violence/graphic"].some((k) => (s[k] ?? 0) > MODERATION_STRONG_SCORE);
+      return r.flagged && (strong || (s["harassment"] ?? 0) > MODERATION_HARASSMENT_SCORE);
     } catch {
       return null;
     } finally {

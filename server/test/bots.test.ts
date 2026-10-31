@@ -145,3 +145,18 @@ describe("custom judge", () => {
     expect(a.toasts.some((t) => /couldn't build/.test(t))).toBe(true);
   });
 });
+
+describe("solo pacing", () => {
+  it("once the human submits, bots finish within BOT_HURRY_MS and the market opens", async () => {
+    const sim = new Sim(new FakeLlm());
+    const [me] = room(sim, 1);
+    me.send({ type: "host.addBots" });
+    me.send({ type: "host.start" });
+    await sim.until("WRITE");
+    const t0 = sim.now;
+    await sim.advance(2_000);
+    me.send({ type: "write.submit", text: "a quick answer" });
+    await sim.until("MARKET", 10_000);
+    expect(sim.now - t0).toBeLessThanOrEqual(2_000 + 1_500 + 2_000); // + moderation grace
+  });
+});

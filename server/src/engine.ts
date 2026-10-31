@@ -36,6 +36,9 @@ import {
   NICK_MIN,
   NO_ANSWER,
   PRICE_BROADCAST_MS,
+  PRICE_HISTORY_MAX,
+  PRICE_SAMPLE_MIN_GAP_MS,
+  BOT_HURRY_MS,
   PROMPTS,
   REMOVED_ANSWER,
   REVEAL_EXTEND_MS,
@@ -1132,6 +1135,12 @@ export class RoomEngine {
     }
     this.needState = true;
     this.needPrivate.add(seat.id);
+    // no dead air in solo: once every connected human is in, bots finish quickly
+    const humansLeft = this.activeSeats().some((x) => !x.isBot && !x.away && x.connected && r.clues[x.id] && !r.answers[x.id]);
+    if (!humansLeft) {
+      const soon = this.deps.now() + BOT_HURRY_MS;
+      for (const id of Object.keys(r.botSubmitAt)) if (!r.answers[id]) r.botSubmitAt[id] = Math.min(r.botSubmitAt[id], soon);
+    }
     this.maybeEndWrite();
   }
 
@@ -1245,8 +1254,8 @@ export class RoomEngine {
     const t = this.deps.now() - r.marketStart;
     const p = lmsrPrices(r.q, r.b).map((x) => Math.round(x * 1000) / 1000);
     const last = r.priceHistory[r.priceHistory.length - 1];
-    if (last && t - last.t < 250) r.priceHistory[r.priceHistory.length - 1] = { t: last.t, p };
-    else if (r.priceHistory.length < 400) r.priceHistory.push({ t, p });
+    if (last && t - last.t < PRICE_SAMPLE_MIN_GAP_MS) r.priceHistory[r.priceHistory.length - 1] = { t: last.t, p };
+    else if (r.priceHistory.length < PRICE_HISTORY_MAX) r.priceHistory.push({ t, p });
   }
 
   private sendPrices() {

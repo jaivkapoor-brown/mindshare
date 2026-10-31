@@ -54,7 +54,8 @@ export const TELL_AT_REMAINING_MS = 30_000;
 export const COST_TOLERANCE = 2;
 export const TRADE_RATE_PER_SEC = 10;
 export const PRICE_BROADCAST_MS = 100; // 10 Hz cap
-export const PRICE_SAMPLE_MS = 1_000;
+export const PRICE_SAMPLE_MIN_GAP_MS = 250; // price-history points closer than this are merged
+export const PRICE_HISTORY_MAX = 400;
 export const MAX_CHART_LINES = 12;
 
 // Audience
@@ -73,6 +74,7 @@ export const BOT_BUY_MAX = 8;
 export const BOT_QUIET_FINAL_MS = 3_000;
 export const BOT_WRITE_MIN_MS = 4_000;
 export const BOT_WRITE_MAX_MS = 14_000;
+export const BOT_HURRY_MS = 1_500; // once every connected human has submitted, bots finish within this
 
 // Keyword judge
 export const KW_LOVE = 2;
@@ -98,6 +100,13 @@ export const LLM_TIMEOUT_BOTS_MS = 8_000;
 export const LLM_TIMEOUT_CUSTOM_MS = 10_000;
 export const LLM_TIMEOUT_MODERATE_MS = 2_000;
 export const VERDICT_TEMPERATURE = 0.3;
+export const DECOY_TEMPERATURE = 0.9;
+export const TELL_TEMPERATURE = 0.8;
+export const BOT_ANSWER_TEMPERATURE = 1;
+export const DECOY_LENGTH_FACTOR = 0.85; // decoys aim slightly shorter than the room's median answer
+export const DECOY_DEFAULT_LEN = 28; // target when there are no earlier answers to copy
+export const MODERATION_STRONG_SCORE = 0.5; // block if any strong category (hate, sexual, self-harm, threats) scores above this
+export const MODERATION_HARASSMENT_SCORE = 0.8;
 export const VERDICT_REASON_MAX_WORDS = 20;
 
 // Client
