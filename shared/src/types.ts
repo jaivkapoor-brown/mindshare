@@ -148,6 +148,10 @@ export interface PublicState {
   insiderResults: InsiderResult[] | null;
   insiderVotes: number;
   marketEndsAt: number | null;
+  audienceQ: number[];
+  crowdVotes: Record<string, number>;
+  customPending: boolean;
+  customReady: string | null;
 }
 
 export interface PrivateState {

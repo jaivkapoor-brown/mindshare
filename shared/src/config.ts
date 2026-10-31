@@ -83,8 +83,12 @@ export const KW_SHORT_BONUS = 1;
 export const KW_SHORT_LEN = 40;
 
 // LLM
-export const MODEL_FAST = "gpt-5-mini";
-export const MODEL_BEST = "gpt-5";
+export const MODEL_FAST = "gpt-5.4-mini"; // reasoning effort "none": ~1.1 s for a verdict-sized call
+export const MODEL_BEST = "gpt-5.5"; // reasoning effort "low": ~3 s, noticeably better judgment
+export const REASONING_FAST = "none";
+export const REASONING_BEST = "low";
+export const VERDICT_BEST_BUDGET_MS = 4_200; // first verdict attempt; the retry uses MODEL_FAST in what is left of 6 s
+export const LLM_RETRY_MIN_MS = 1_200; // don't start a retry with less time than this
 export const MODERATION_MODEL = "omni-moderation-latest";
 export const LLM_TIMEOUT_VOICE_MS = 3_000;
 export const LLM_TIMEOUT_DECOYS_MS = 8_000;
