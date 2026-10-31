@@ -126,6 +126,11 @@ function Home() {
           {busy === "join" ? "…" : "Join"}
         </button>
       </form>
+      {code.length === 4 && (
+        <button className="linkbtn" style={{ alignSelf: "flex-start", marginTop: -8 }} onClick={() => { if (nickOk) { remember(); navigate(`/r/${code}?watch=1`); } else setError("Pick a nickname first."); }}>
+          Just watch (audience wallet + crowd vote)
+        </button>
+      )}
       {error && <div className="banner err" role="alert">{error}</div>}
 
       <ol className="how">

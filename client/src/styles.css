@@ -273,20 +273,20 @@ h2.sec { font-size: 14px; color: var(--dim); text-transform: uppercase; letter-s
 .banner.err { background: #3a1814; color: var(--red); }
 
 /* ---------- board (TV) ---------- */
-.board { padding: 3vh 3vw; min-height: 100vh; display: grid; grid-template-columns: 1fr 2.2fr; gap: 3vw; }
+.board { padding: 2.5vh 3vw; height: 100vh; overflow: hidden; box-sizing: border-box; min-height: 100vh; display: grid; grid-template-columns: 1fr 2.2fr; gap: 3vw; }
 .board .side { display: flex; flex-direction: column; gap: 2.5vh; }
 .board .bcode { font-family: var(--mono); font-size: 9vh; font-weight: 800; color: var(--amber); letter-spacing: 0.15em; line-height: 1; }
 .board .qr { background: #fff; padding: 1.2vh; border-radius: 12px; width: fit-content; }
 .board .qr svg { display: block; width: 22vh; height: 22vh; }
-.board .big-prompt { font-size: 4.6vh; font-weight: 700; line-height: 1.2; }
-.board .btk { display: grid; grid-template-columns: 6vh 1fr 14vh; align-items: center; gap: 2vh; padding: 1.4vh 2vh; border-radius: 16px; background: var(--bg2); margin-bottom: 1.2vh; font-size: 3.4vh; }
-.board .btk .l { font-family: var(--mono); color: var(--amber); font-weight: 800; font-size: 4.4vh; }
-.board .btk .p { font-family: var(--mono); font-weight: 800; font-size: 5.4vh; text-align: right; }
+.board .big-prompt { font-size: 4vh; font-weight: 700; line-height: 1.2; }
+.board .btk { display: grid; grid-template-columns: 5vh 1fr 12vh; align-items: center; gap: 2vh; padding: 0.9vh 2vh; border-radius: 14px; background: var(--bg2); margin-bottom: 0.9vh; font-size: 3vh; }
+.board .btk .l { font-family: var(--mono); color: var(--amber); font-weight: 800; font-size: 3.6vh; }
+.board .btk .p { font-family: var(--mono); font-weight: 800; font-size: 4.4vh; text-align: right; }
 .board .btk.win { outline: 4px solid var(--amber); }
 .board .bsec { font-size: 2.4vh; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
 .board .bline { display: flex; justify-content: space-between; font-size: 3vh; padding: 0.6vh 0; }
-.board .phase-big { font-size: 6vh; font-weight: 800; }
-@media (max-width: 800px) { .board { grid-template-columns: 1fr; } }
+.board .phase-big { font-size: 5vh; font-weight: 800; }
+@media (max-width: 800px) { .board { grid-template-columns: 1fr; height: auto; overflow: visible; } }
 
 @media (min-width: 900px) {
   .screen { max-width: 640px; padding-top: 24px; }
