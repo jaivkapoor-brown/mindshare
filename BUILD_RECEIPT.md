@@ -15,6 +15,9 @@ Design pillars, in order: legible in one screen; the reveal is the payoff; the A
 - The first slow-verdict test waited on a promise that never resolves; the test harness, not the game, was stuck. Restructured the test.
 - The first deploy after M2 shipped a stale client bundle because the client wasn't rebuilt after a UI fix; caught by eyeballing, redeployed. `npm run deploy` always rebuilds.
 - Keyword matching first missed "fetching" for the keyword "fetch"; added -ing/-ed suffixes.
+- The first verdict design (gpt-5.5 for 4.2 s, then a sequential retry) failed about half the time under 6 parallel calls. Replaced it with a parallel hedge.
+- The first decoy prompt let the decoy writer, who sees the whole judge, write answers that won 83% of rounds; humans with one clue each couldn't compete. Bots also ignored their clues. Both fixed; see docs/llm-eval.md.
+- The first player copy used "bet" and "cash", which the contest rules forbid (no gambling language). Replaced them.
 
 ## 3. Human decisions that changed the game (human, after playtests)
 
@@ -24,7 +27,10 @@ Design pillars, in order: legible in one screen; the reveal is the payoff; the A
 
 - Spec, trait deck seed, prompt seed, architecture choices: human.
 - Scaffolding, LMSR implementation and tests, server state machine, client screens, deploy pipeline: agent, directed by SPEC.md.
-- 
+- Trait deck and prompt list expansion (to 44/53/53/43 traits and 157 prompts) plus the 216-answer decoy bank: a sub-agent, appending in the human's voice. Human review recommended.
+- Model choice: the agent benchmarked 8 OpenAI models on a verdict-shaped call and chose gpt-5.5 (judgment) hedged by gpt-5.4-mini (speed).
+- Decoy tuning: an opt-in real-API eval (`server/test/real-llm.test.ts`) showed decoys winning 83% of simulated rounds; prompt changes brought it to 50%.
+
 
 ## 5. Submission description (draft, 2 paragraphs)
 

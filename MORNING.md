@@ -24,7 +24,7 @@
 | BL6 cover image | done | submission/cover.png |
 | BL7 description | done | submission/description.md |
 | BL8 accessibility | done | keyboard e2e, focus rings, aria labels, reduced motion |
-| BL9 performance | pending | |
+| BL9 performance | done | 94 KB gzipped JS; first paint 0.4–0.6 s, FCP ≤ 1 s on throttled 4G + 4× CPU (`node e2e/perf.mjs`) |
 | BL10 README | done | |
 
 ## Deployed vs local
