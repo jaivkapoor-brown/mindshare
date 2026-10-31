@@ -1,7 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
-import { ROOM_CODE_RETRIES, isValidCode, randomCode, randomHex } from "@mindshare/shared";
+import { isValidCode, randomHex } from "@mindshare/shared";
 import type { ServerMessage } from "@mindshare/shared";
 import { RoomEngine, newRoomState } from "./engine";
+import { claimCode } from "./codes";
 import type { ConnInfo, EngineDeps, RoomStateData } from "./engine";
 import { makeLlm } from "./openai";
 
@@ -163,12 +164,8 @@ export default {
       return stub.fetch(new Request(`https://room/ws?code=${code}`, request));
     }
     if (url.pathname === "/api/rooms" && request.method === "POST") {
-      for (let i = 0; i < ROOM_CODE_RETRIES; i++) {
-        const code = randomCode();
-        const stub = env.ROOM.get(env.ROOM.idFromName(code));
-        const res = await stub.fetch(`https://room/init?code=${code}`);
-        if (res.ok) return Response.json({ code });
-      }
+      const code = await claimCode(async (c) => (await env.ROOM.get(env.ROOM.idFromName(c)).fetch(`https://room/init?code=${c}`)).ok);
+      if (code) return Response.json({ code });
       return Response.json({ error: "Couldn't find a free room code. Try again." }, { status: 503 });
     }
     const info = url.pathname.match(/^\/api\/rooms\/([A-Za-z]{4})$/);

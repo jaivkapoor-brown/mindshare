@@ -12,7 +12,7 @@ Write exactly {{count}} answer(s). For each, follow its role, in order:
 {{roles}}
 
 Style rules:
-- Match the length and tone of real player answers. {{examples_line}} Aim for about {{target_len}} characters; never more than 80.
+- Match the length and tone of real player answers. {{examples_line}} Aim for about {{target_len}} characters; shorter beats longer; never more than 80.
 - Casual, lowercase-ish, a little sloppy, like a person typing fast. No quotation marks, no emoji, no hashtags.
-- Funny or specific, not generic. Never mention the judge, traits, or the game.
+- Funny or specific, not generic, but no funnier or more polished than a typical player. Never mention the judge, traits, or the game.
 - No profanity, nothing hateful.

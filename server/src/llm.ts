@@ -46,6 +46,8 @@ export interface BotAnswersInput {
   prompt: string;
   count: number;
   examples: string[];
+  /** One clue per bot ("The judge ..."), in seat order; each bot leans into its own clue like a real player. */
+  clues?: string[];
 }
 
 export interface CustomJudgeInput {

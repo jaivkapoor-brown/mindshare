@@ -459,3 +459,16 @@ describe("audience", () => {
     expect(board.lastError().code).toBe("read_only");
   });
 });
+
+describe("room code claiming", () => {
+  it("retries on collision until a free code is claimed", async () => {
+    const { claimCode } = await import("../src/codes");
+    const taken = new Set(["ABCD", "EFGH"]);
+    const seq = ["ABCD", "EFGH", "JKLM"];
+    let i = 0;
+    const code = await claimCode(async (c) => !taken.has(c), () => seq[i++]);
+    expect(code).toBe("JKLM");
+    expect(i).toBe(3);
+    expect(await claimCode(async () => false, () => "ZZZZ")).toBeNull();
+  });
+});

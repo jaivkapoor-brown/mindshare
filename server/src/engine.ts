@@ -1030,11 +1030,16 @@ export class RoomEngine {
     const bots = this.activeSeats().filter((x) => x.isBot && !x.away);
     if (bots.length) {
       this.track(
-        this.deps.llm.botAnswers({ prompt: r.prompt.text, count: bots.length, examples }),
+        this.deps.llm.botAnswers({
+          prompt: r.prompt.text,
+          count: bots.length,
+          examples,
+          clues: bots.map((b) => (r.clues[b.id] ? "The judge " + r.persona[r.clues[b.id]].clue_text : "")),
+        }),
         "bot_answers",
         (v) => {
           if (s.round !== r) return;
-          r.botAnswers = (v ?? []).map((t) => sanitizeText(t, ANSWER_MAX)).filter((t) => t && !localFlag(t));
+          r.botAnswers = (v ?? []).map((t) => sanitizeText(t, ANSWER_MAX)).map((t) => (localFlag(t) ? "" : t));
         },
       );
     }
@@ -1092,8 +1097,11 @@ export class RoomEngine {
   private botSubmit(id: string) {
     const r = this.s.round!;
     const taken = new Set(Object.values(r.answers).map((a) => a.text.toLowerCase()));
-    let text = (r.botAnswers ?? []).find((t) => !taken.has(t.toLowerCase()));
-    if (text) r.botAnswers = r.botAnswers!.filter((t) => t !== text);
+    // each bot takes the answer written for its own clue (same order as the batch request), else any unused one
+    const bots = this.activeSeats().filter((x) => x.isBot && !x.away);
+    const mine = r.botAnswers?.[bots.findIndex((b) => b.id === id)];
+    let text = mine && !taken.has(mine.toLowerCase()) ? mine : (r.botAnswers ?? []).find((t) => t && !taken.has(t.toLowerCase()));
+    if (text && r.botAnswers) r.botAnswers = r.botAnswers.map((t) => (t === text ? "" : t));
     if (!text) {
       const bank = makeRng(`${r.seed}:botbank:${id}`).shuffle(decoysFor(r.prompt.category));
       text = bank.find((t) => !taken.has(t.toLowerCase())) ?? bank[0];

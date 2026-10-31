@@ -76,12 +76,12 @@ export function verdictSchema(letters: string[]) {
 
 export function buildDecoyPrompt(input: DecoyInput) {
   const lens = input.examples.map((e) => e.length).sort((a, b) => a - b);
-  const target = lens.length ? lens[Math.floor(lens.length / 2)] : 28;
+  const target = Math.round((lens.length ? lens[Math.floor(lens.length / 2)] : 28) * 0.85);
   const roles = input.bait
     .map((b, i) =>
       b === "winner"
-        ? `${i + 1}. Looks like an obvious winner for this judge at first glance, but quietly touches what the judge hates (or ignores the quirk), so it would actually lose.`
-        : `${i + 1}. Looks weak or random at first glance, but quietly hits what the judge loves or the quirk, so it would actually win.`,
+        ? `${i + 1}. Looks like a strong pick for this judge at first glance, but quietly touches what the judge hates, so it should lose.`
+        : `${i + 1}. Looks weak or random at first glance; it faintly echoes the judge's quirk or who they are (never what they love), so it's a long shot that could surprise.`,
     )
     .join("\n");
   const examples_line = input.examples.length
@@ -211,29 +211,32 @@ export class OpenAiLlm implements Llm {
     return t;
   }
 
+  /** The verdict is hedged: MODEL_BEST and MODEL_FAST run in parallel; BEST wins if it answers within its budget. */
   async verdict(input: VerdictInput): Promise<VerdictResult | null> {
     const letters = input.answers.map((a) => a.ticker);
     const { system, user } = buildVerdictPrompt(input);
     const schema = verdictSchema(letters);
-    const r = await this.withRetry(LLM_TIMEOUT_VERDICT_MS, (ms, n) =>
-      this.call<{ winner: string; runner_up: string; reason: string }>(
-        n === 0
-          ? { label: "verdict", model: MODEL_BEST, reasoning: REASONING_BEST, temperature: VERDICT_TEMPERATURE, system, user, schema, timeoutMs: Math.min(ms, VERDICT_BEST_BUDGET_MS), maxTokens: 700 }
-          : { label: "verdict_retry", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: VERDICT_TEMPERATURE, system, user, schema, timeoutMs: ms, maxTokens: 200 },
-      ),
-    );
-    if (!r || !letters.includes(r.winner)) return null;
-    return { winner: r.winner, reason: r.reason, runnerUp: letters.includes(r.runner_up) ? r.runner_up : null };
+    type Out = { winner: string; runner_up: string; reason: string };
+    const valid = (r: Out | null) => (r && letters.includes(r.winner) ? r : null);
+    const fast = this.call<Out>({ label: "verdict_fast", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: VERDICT_TEMPERATURE, system, user, schema, timeoutMs: LLM_TIMEOUT_VERDICT_MS - 300, maxTokens: 200 });
+    const best = valid(await this.call<Out>({ label: "verdict", model: MODEL_BEST, reasoning: REASONING_BEST, temperature: VERDICT_TEMPERATURE, system, user, schema, timeoutMs: VERDICT_BEST_BUDGET_MS, maxTokens: 700 }));
+    const r = best ?? valid(await fast);
+    if (!r) return null;
+    return { winner: r.winner, reason: r.reason, runnerUp: letters.includes(r.runner_up) && r.runner_up !== r.winner ? r.runner_up : null };
   }
 
   async botAnswers(input: BotAnswersInput): Promise<string[] | null> {
     const schema = { type: "object", additionalProperties: false, required: ["answers"], properties: { answers: { type: "array", items: { type: "string" } } } };
     const examples_line = input.examples.length ? `For reference, people in this room write like: ${input.examples.map((e) => `"${e.replace(/"/g, "'")}"`).join(" and ")}.` : "";
-    const system = fill(botsTpl, { prompt: input.prompt, count: input.count, examples_line });
+    const clues_block = input.clues?.some(Boolean)
+      ? "Each player holds one secret clue about the judge and leans into it (subtly, the way a clever player would):\n" +
+        input.clues.map((c, i) => `- Player ${i + 1}: ${c || "no clue"}`).join("\n")
+      : "";
+    const system = fill(botsTpl, { prompt: input.prompt, count: input.count, examples_line, clues_block });
     const r = await this.withRetry(LLM_TIMEOUT_BOTS_MS, (ms) =>
       this.call<{ answers: string[] }>({ label: "bot_answers", model: MODEL_FAST, reasoning: REASONING_FAST, temperature: 1, system, user: `Write ${input.count} answers.`, schema, timeoutMs: ms, maxTokens: 300 }),
     );
-    return r?.answers?.filter((a) => typeof a === "string" && a.trim()) ?? null;
+    return r?.answers?.map((a) => (typeof a === "string" ? a.trim() : "")).slice(0, input.count) ?? null;
   }
 
   async moderate(text: string): Promise<boolean | null> {

@@ -64,7 +64,7 @@ describe("prompt builders", () => {
     const t = buildDecoyPrompt({ persona: persona("d1"), prompt: "x", count: 2, bait: ["winner", "loser"], examples: ["short one", "a medium length answer here"] });
     expect(t).toContain("short one");
     expect(t).toMatch(/about \d+ characters/);
-    expect(t).toMatch(/1\. Looks like an obvious winner/);
+    expect(t).toMatch(/1\. Looks like a strong pick/);
     expect(t).toMatch(/2\. Looks weak/);
   });
 });
@@ -83,6 +83,16 @@ describe("OpenAiLlm transport", () => {
     const { f } = fakeFetch(() => ({ winner: "Z", runner_up: "A", reason: "?" }));
     const v = await new OpenAiLlm("k", f, quiet).verdict({ persona: persona("x"), prompt: "p", answers: [{ ticker: "A", text: "a" }] });
     expect(v).toBeNull();
+  });
+
+  it("verdict hedge: falls back to the fast model when the best model errors", async () => {
+    const f = async (_u: string, init: RequestInit) => {
+      const req = JSON.parse(String(init.body));
+      if (req.model === "gpt-5.5") return new Response(JSON.stringify({ error: { message: "x" } }), { status: 500 });
+      return new Response(JSON.stringify({ output: [{ type: "message", content: [{ type: "output_text", text: '{"winner":"A","runner_up":"B","reason":"fast"}' }] }] }));
+    };
+    const v = await new OpenAiLlm("k", f, quiet).verdict({ persona: persona("h"), prompt: "p", answers: [{ ticker: "A", text: "a" }, { ticker: "B", text: "b" }] });
+    expect(v?.reason).toBe("fast");
   });
 
   it("retries once on error, within the same deadline", async () => {

@@ -47,6 +47,7 @@ test("solo: one phone plays a full game with bots to the share card, board updat
   await page.getByRole("button", { name: "Share card" }).click();
   const d = await download;
   expect(d === null || d.suggestedFilename() === "mindshare.png").toBe(true);
+  if (d) await d.saveAs("screenshots/share-card.png");
   await expect(page.getByRole("button", { name: "Play again" })).toBeVisible();
   await boardCtx.close();
 });
